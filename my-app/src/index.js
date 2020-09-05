@@ -6,7 +6,6 @@ import './index.css';
 function Square(props){
   // Create button with a function handler and label that were passed in via props, optionally highlighting
   if (props.highlight) {
-    console.log("HIGHIGHTING")
     return (
       <button className="square, square-highlighted" onClick={props.onClick}> 
         {props.value}
@@ -29,6 +28,7 @@ class Board extends React.Component {
         value={this.props.squares[i]} 
         onClick={() => this.props.onClick(i)}
         highlight={this.props.highlightIdxs.includes(i)}
+        key={i}
         />
     );
   }
@@ -48,7 +48,7 @@ class Board extends React.Component {
       }
       // append row of squares wrapped in a board-row div to list
       rows.push(
-        <div className="board-row">{cols}</div>
+        <div className="board-row" key={r}>{cols}</div>
       )
     }
     return (
@@ -143,7 +143,6 @@ class Game extends React.Component {
     
     // Construct status message to display
     let status;
-    console.log("winner = " + winner)
     if (winner) {
       status = 'Winner: ' + winner;
     } else {
