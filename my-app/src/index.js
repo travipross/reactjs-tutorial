@@ -131,8 +131,12 @@ class Game extends React.Component {
     
     // Construct status message to display
     let status;
-    if (winner) {
-      status = 'Winner: ' + winner;
+    if (current.squares.every((v) => v)){
+      if (winner) {
+        status = 'Winner: ' + winner;
+      } else {
+        status = "Tie game!"
+      }
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
