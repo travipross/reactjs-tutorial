@@ -5,13 +5,15 @@ import './index.css';
 
 function Square(props){
   return (
-    <button className="square" onClick={props.onClick}>
+    // Create button with a function handler and label that were passed in via props
+    <button className="square" onClick={props.onClick}> 
       {props.value}
     </button>
   )
 }
 
 class Board extends React.Component {
+  // Create new square component having a value and a callback function (passed from parent Game component)
   renderSquare(i) {
     return (
       <Square 
@@ -21,6 +23,7 @@ class Board extends React.Component {
     );
   }
 
+  // Create squares (buttons) in rows defined by CSS file, having value specified by input arguement
   render() {
     return (
       <div>
@@ -45,6 +48,7 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+  // Initialize Game with state for history, next player, and step number
   constructor(props){
     super(props);
     this.state = {
@@ -56,6 +60,7 @@ class Game extends React.Component {
     }
   }
   
+  // method to change state to a different step
   jumpTo(step){
     this.setState({
       stepNumber: step,
@@ -63,14 +68,22 @@ class Game extends React.Component {
     });
   }
 
+  // callback function to execute when a square is clicked
   handleClick(i) {
+    // store local state
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
+
+    // if winner is established, exit function early
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
+
+    // Set value of selected square based on whose turn is next
     squares[i] = this.state.xIsNext ? 'X' : 'O';
+
+    // Update state with new history, next player, and step number
     this.setState({
       history: history.concat([{
         squares: squares,
@@ -80,29 +93,36 @@ class Game extends React.Component {
     });
   }
 
+  // Render game board component
   render() {
+    // Get copies of current state
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
-    const moves = history.map((step, move) => {
-      const desc = move ?
-        'Go to move #' + move :
-        'Go to game start';
-      return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}
-          </button>
-        </li>
-      );
-    });
-
+    // Create list items 
+    const moves = history.map(
+      (step, move) => {
+        const desc = move ? 'Go to move #' + move : 'Go to game start';
+        return (
+          <li key={move}>
+            <button onClick={() => this.jumpTo(move)}>
+              {desc}
+            </button>
+          </li>
+        );
+      }
+    );
+    
+    // Construct status message to display
     let status;
     if (winner) {
       status = 'Winner: ' + winner;
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
+
+    // Draw board with current state and onClick handler
     return (
       <div className="game">
         <div className="game-board">
@@ -127,7 +147,7 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-
+// Convenience function to calculate winner
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -139,11 +159,14 @@ function calculateWinner(squares) {
     [0, 4, 8],
     [2, 4, 6],
   ];
+  // iterate over each line definition: If containing all the same value, that value wins
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
       return squares[a];
     }
   }
+
+  // No full line of same value; no winner yet
   return null;
 }
