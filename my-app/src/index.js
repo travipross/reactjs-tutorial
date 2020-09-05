@@ -25,25 +25,27 @@ class Board extends React.Component {
 
   // Create squares (buttons) in rows defined by CSS file, having value specified by input arguement
   render() {
+    var rows = []
+    // Loop over rows
+    for (var r=0; r<3; r++){
+      var cols = []
+      // Loop over cols within row
+      for (var c=0; c<3; c++){
+        // Append squares to cols to form a row
+        cols.push(
+          this.renderSquare(r*3+c)
+        )
+      }
+      // append row of squares wrapped in a board-row div to list
+      rows.push(
+        <div className="board-row">{cols}</div>
+      )
+    }
     return (
       <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
+        {rows}
       </div>
-    );
+    )
   }
 }
 
