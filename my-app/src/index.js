@@ -4,12 +4,21 @@ import './index.css';
 
 
 function Square(props){
-  return (
-    // Create button with a function handler and label that were passed in via props
-    <button className="square" onClick={props.onClick}> 
-      {props.value}
-    </button>
-  )
+  // Create button with a function handler and label that were passed in via props, optionally highlighting
+  if (props.highlight) {
+    console.log("HIGHIGHTING")
+    return (
+      <button className="square, square-highlighted" onClick={props.onClick}> 
+        {props.value}
+      </button>
+    )
+  } else {
+    return (
+      <button className="square" onClick={props.onClick}> 
+        {props.value}
+      </button>
+    )
+  }
 }
 
 class Board extends React.Component {
@@ -19,6 +28,7 @@ class Board extends React.Component {
       <Square 
         value={this.props.squares[i]} 
         onClick={() => this.props.onClick(i)}
+        highlight={this.props.highlightIdxs.includes(i)}
         />
     );
   }
@@ -79,7 +89,7 @@ class Game extends React.Component {
     const squares = current.squares.slice();
 
     // if winner is established, exit function early
-    if (calculateWinner(squares) || squares[i]) {
+    if (calculateWinner(squares)[0] || squares[i]) {
       return;
     }
 
@@ -102,8 +112,10 @@ class Game extends React.Component {
     // Get copies of current state
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
-
+    const winVals = calculateWinner(current.squares);
+    const winner = winVals[0]
+    const winSquares = winVals[1]
+    
     // Create list items 
     const moves = history.map(
       (step, move) => {
@@ -131,14 +143,15 @@ class Game extends React.Component {
     
     // Construct status message to display
     let status;
-    if (current.squares.every((v) => v)){
-      if (winner) {
-        status = 'Winner: ' + winner;
-      } else {
-        status = "Tie game!"
-      }
+    console.log("winner = " + winner)
+    if (winner) {
+      status = 'Winner: ' + winner;
     } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+      if (current.squares.every((v) => v)){
+        status = "Tie game!"
+      } else {
+        status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+      }
     }
 
     // Draw board with current state and onClick handler
@@ -148,6 +161,7 @@ class Game extends React.Component {
           <Board
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
+            highlightIdxs={winSquares}
           />
         </div>
         <div className="game-info">
@@ -182,12 +196,12 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return [squares[a], lines[i]]; // return value of winner, and the indices where the win was located
     }
   }
 
   // No full line of same value; no winner yet
-  return null;
+  return [null, [null, null, null]];
 }
 
 function rowColFromIndex(i) {

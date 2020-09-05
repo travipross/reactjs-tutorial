@@ -17,7 +17,7 @@ ol, ul {
   margin-bottom: 10px;
 }
 
-.square {
+.square, .square-highlighted{
   background: #fff;
   border: 1px solid #999;
   float: left;
@@ -34,6 +34,10 @@ ol, ul {
 
 .square:focus {
   outline: none;
+}
+
+.square-highlighted {
+  background: red
 }
 
 .kbd-navigation .square:focus {
