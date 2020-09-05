@@ -71,6 +71,7 @@ class Game extends React.Component {
       xIsNext: true,
       stepNumber: 0
     }
+    this.reverseSorting = false
   }
   
   // method to change state to a different step
@@ -140,6 +141,7 @@ class Game extends React.Component {
         )
       }
     );
+
     
     // Construct status message to display
     let status;
@@ -154,6 +156,7 @@ class Game extends React.Component {
     }
 
     // Draw board with current state and onClick handler
+    const movesToRender = this.state.reverseSorting ? moves.reverse() : moves
     return (
       <div className="game">
         <div className="game-board">
@@ -165,7 +168,17 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{moves}</ol>
+          <ol reversed={this.state.reverseSorting}>{movesToRender}</ol>
+        </div>
+        <div className="order-button">
+          <button onClick={() => {
+            this.setState(
+              // Toggle the ordering when clicked
+              {reverseSorting: !this.state.reverseSorting}
+            )
+          }}>
+            Toggle Sort order
+          </button>
         </div>
       </div>
     );
